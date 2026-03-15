@@ -887,7 +887,17 @@ function addQ2(i){S.q.push({...S.q[i]});updateQP();toast('Added to queue');}
 function toggleShuffle(){S.sh=!S.sh;['bsh','fsbsh'].forEach(id=>document.getElementById(id)?.classList.toggle('on',S.sh));toast(S.sh?'Shuffle on':'Shuffle off');}
 function toggleRepeat(){S.rp=!S.rp;['brp','fsbrp'].forEach(id=>document.getElementById(id)?.classList.toggle('on',S.rp));toast(S.rp?'Repeat on':'Repeat off');}
 function setVol(v){if(ytR)ytp.setVolume(parseInt(v));}
-function seekTo(e,isFS=false){if(!ytR||S.dur<=0)return;const r=e.currentTarget.getBoundingClientRect();ytp.seekTo(((e.clientX-r.left)/r.width)*S.dur,true);}
+function seekTo(e,isFS=false){if(!ytR||S.dur<=0)return;const el=e.currentTarget;const r=el.getBoundingClientRect();ytp.seekTo(Math.max(0,Math.min(S.dur,((e.clientX-r.left)/r.width)*S.dur)),true);}
+
+// Add drag support
+['pb','fspb'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  let dragging=false;
+  el.addEventListener('mousedown',e=>{dragging=true;seekTo(e,id==='fspb');});
+  document.addEventListener('mousemove',e=>{if(!dragging)return;const r=el.getBoundingClientRect();ytp.seekTo(Math.max(0,Math.min(S.dur,((e.clientX-r.left)/r.width)*S.dur)),true);});
+  document.addEventListener('mouseup',()=>{dragging=false;});
+});
 function showVid(){document.getElementById('vt').style.display='block';document.getElementById('vt').textContent=vidOn?'Hide video':'Show video';}
 function toggleVid(){vidOn=!vidOn;document.getElementById('yw').classList.toggle('show',vidOn);document.getElementById('vt').textContent=vidOn?'Hide video':'Show video';}
 
