@@ -275,13 +275,13 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);displa
 /* ── FULLSCREEN (Apple Music) ── */
 #fs{position:fixed;inset:0;z-index:800;display:none}
 #fs.open{display:flex}
-#fsbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(80px) brightness(.12) saturate(1.6);transform:scale(1.15)}
-#fsov{position:absolute;inset:0;background:rgba(0,0,0,.82)}
+#fsbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(80px) brightness(.25) saturate(1.6);transform:scale(1.15)}
+#fsov{position:absolute;inset:0;background:rgba(0,0,0,.55)}
 #fscl{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.12);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.7);z-index:2}
 #fscl:hover{background:rgba(255,255,255,.22);color:#fff}
 #fscl svg{width:18px;height:18px}
-#fsl{position:relative;z-index:1;width:420px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:40px;gap:24px;height:100%}
-#fsar{width:300px;height:300px;border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.8)}
+#fsl{position:relative;z-index:1;width:320px;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;gap:18px;height:100%}
+#fsar{width:220px;height:220px;border-radius:12px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.8)}
 #fsar img{width:100%;height:100%;object-fit:cover;display:block}
 #fsti{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #fsat{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
@@ -315,29 +315,59 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);displa
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
   pointer-events:none;
-  /* fade top and bottom */
-  -webkit-mask-image:linear-gradient(transparent 0%,black 20%,black 80%,transparent 100%);
-  mask-image:linear-gradient(transparent 0%,black 20%,black 80%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 15%,black 85%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 15%,black 85%,transparent 100%);
 }
 #fslyr{
-  display:flex;flex-direction:column;gap:28px;
-  width:100%;padding:0 40px;
-  /* this gets moved by JS, not scrolled by user */
+  display:flex;flex-direction:column;gap:32px;
+  width:100%;padding:0 48px;
   position:relative;
-  transition:transform .4s ease;
+  will-change:transform;
+  transition:transform .5s cubic-bezier(.4,0,.2,1);
 }
 .ll{
-  font-size:26px;font-weight:700;line-height:1.5;
-  color:rgba(255,255,255,.15);
+  font-size:20px;font-weight:700;line-height:1.5;
+  color:rgba(255,255,255,.07);
   cursor:default;
   white-space:pre-wrap;
-  transition:all .5s ease;
+  transition:color .4s ease,font-size .4s ease;
+  user-select:none;
 }
-.ll.active{color:#fff;font-size:36px}
-.ll.near{color:rgba(255,255,255,.45);font-size:30px}
+.ll.near{color:rgba(255,255,255,.35);font-size:26px}
+.ll.active{color:#fff;font-size:34px}
+.ll.far2{color:rgba(255,255,255,.04)}
 #fsnolyric{color:rgba(255,255,255,.25);font-size:16px;text-align:center;width:100%}
 
-
+/* left panel */
+#fsl{position:relative;z-index:1;width:340px;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;padding:32px;gap:20px;height:100%}
+#fsar{width:240px;height:240px;border-radius:12px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.8)}
+#fsar img{width:100%;height:100%;object-fit:cover;display:block}
+#fsti{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#fsat{font-size:14px;color:rgba(255,255,255,.5);margin-top:4px}
+#fstac{display:flex;align-items:center;gap:14px;margin-top:4px}
+.fta{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Syne',sans-serif;font-size:12px;transition:color .2s}
+.fta:hover{color:#fff}
+.fta.liked{color:var(--accent)}
+.fta svg{width:16px;height:16px}
+#fsct{display:flex;flex-direction:column;gap:12px}
+#fspr{display:flex;align-items:center;gap:10px}
+#fspb{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:500px;cursor:pointer;transition:height .15s}
+#fspb:hover{height:6px}
+#fspf{height:100%;background:#fff;border-radius:500px;width:0%;pointer-events:none;transition:width .4s linear}
+.fstm{font-size:11px;color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums;width:34px;flex-shrink:0}
+.fstm:last-child{text-align:right}
+#fscr{display:flex;align-items:center;justify-content:center;gap:24px}
+.fcb{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:6px;transition:all .15s;display:flex;border-radius:6px}
+.fcb:hover{color:#fff;transform:scale(1.1)}
+.fcb.on{color:var(--accent)}
+.fcb svg{width:20px;height:20px;display:block}
+#fsbp{width:54px;height:54px;background:#fff;border-radius:50%;color:#000;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
+#fsbp:hover{transform:scale(1.06)}
+#fsbp svg{width:22px;height:22px}
+#fsvr{display:flex;align-items:center;gap:8px}
+#fsvr svg{width:13px;height:13px;color:rgba(255,255,255,.35);flex-shrink:0}
+#fsvsl{-webkit-appearance:none;flex:1;height:3px;background:rgba(255,255,255,.2);border-radius:500px;outline:none;cursor:pointer}
+#fsvsl::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;cursor:pointer}
 
 /* RIGHT — lyrics only, no scroll by user */
 #fsr{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:flex-start;padding:48px 40px;overflow:hidden}
@@ -587,20 +617,42 @@ async function req(path,params){
 function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
 
 // Get playlists that actually contain music
+// Uses localStorage cache so we don't re-check every page load
+const PL_CACHE_KEY='h_pl_music_cache';
+const PL_CACHE_TTL=24*60*60*1000; // 24 hours
+
 async function getMusicPlaylists(){
+  // Load cache
+  let cache={};
+  try{cache=JSON.parse(localStorage.getItem(PL_CACHE_KEY)||'{}');}catch{}
+  const now=Date.now();
+
   const results=[];
   for(const p of allPl){
     if(results.length>=6)break;
+    // Check cache first
+    if(cache[p.id]&&(now-cache[p.id].ts)<PL_CACHE_TTL){
+      if(cache[p.id].hasMusic)results.push(p);
+      continue;
+    }
+    // Fetch and check
     try{
       const d=await req('/api/playlist-items',{playlistId:p.id,maxResults:'10'});
-      if(!d?.items?.length)continue;
+      if(!d?.items?.length){cache[p.id]={hasMusic:false,ts:now};continue;}
       const ids=d.items.map(i=>i.contentDetails?.videoId).filter(Boolean);
-      if(!ids.length)continue;
+      if(!ids.length){cache[p.id]={hasMusic:false,ts:now};continue;}
       const vd=await req('/api/videos',{id:ids.join(',')});
-      if(!vd?.items?.length)continue;
-      if(vd.items.map(mv).some(isMusic))results.push(p);
+      if(!vd?.items?.length){cache[p.id]={hasMusic:false,ts:now};continue;}
+      // Check fraction — if >50% are music tracks, it's a music playlist
+      const tracks=vd.items.map(mv);
+      const musicCount=tracks.filter(isMusic).length;
+      const hasMusic=(musicCount/tracks.length)>0.5;
+      cache[p.id]={hasMusic,ts:now};
+      if(hasMusic)results.push(p);
     }catch{continue;}
   }
+  // Save cache
+  localStorage.setItem(PL_CACHE_KEY,JSON.stringify(cache));
   return results;
 }
 
@@ -942,22 +994,26 @@ function startLyrSync(){
     for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=cur)ai=i;}
     if(ai===lastLyrIdx)return;
     lastLyrIdx=ai;
+    // Classify lines: active, prev2/prev1, next1/next2, far
     document.querySelectorAll('.ll').forEach((el,i)=>{
-      el.classList.remove('active','near');
+      el.classList.remove('active','near','far2');
       const diff=i-ai;
       if(diff===0)el.classList.add('active');
-      else if(Math.abs(diff)<=1)el.classList.add('near');
+      else if(Math.abs(diff)<=2)el.classList.add('near');
+      else el.classList.add('far2');
     });
-    // Move the lyric container up so active line stays centered
-    const activeLine=document.getElementById(`ll${ai}`);
-    const container=document.getElementById('fsr');
+    // Move container so active line is vertically centered — JS controls position, not user
+    const activeLine=document.getElementById('ll'+ai);
+    const panel=document.getElementById('fsr');
     const lyrDiv=document.getElementById('fslyr');
-    if(activeLine&&container&&lyrDiv){
-      const containerCenter=container.offsetHeight/2;
-      const lineOffset=activeLine.offsetTop+activeLine.offsetHeight/2;
-      lyrDiv.style.transform=`translateY(${containerCenter-lineOffset}px)`;
+    if(activeLine&&panel&&lyrDiv){
+      const panelH=panel.offsetHeight;
+      const lineTop=activeLine.offsetTop;
+      const lineH=activeLine.offsetHeight;
+      const translateY=(panelH/2)-lineTop-(lineH/2);
+      lyrDiv.style.transform='translateY('+translateY+'px)';
     }
-  },300);
+  },200);
 }
 
 
