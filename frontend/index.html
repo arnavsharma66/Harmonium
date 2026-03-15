@@ -277,11 +277,67 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);displa
 /* ── FULLSCREEN (Apple Music) ── */
 #fs{position:fixed;inset:0;z-index:800;display:none}
 #fs.open{display:flex}
-#fsbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(80px) brightness(.3) saturate(1.6);transform:scale(1.15)}
-#fsov{position:absolute;inset:0;background:rgba(0,0,0,.5)}
-#fscl{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.8);z-index:2;transition:all .2s}
+#fsbg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(80px) brightness(.25) saturate(1.6);transform:scale(1.15)}
+#fsov{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+#fscl{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.12);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.7);z-index:2}
 #fscl:hover{background:rgba(255,255,255,.22);color:#fff}
 #fscl svg{width:18px;height:18px}
+#fsl{position:relative;z-index:1;width:320px;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;gap:18px;height:100%}
+#fsar{width:220px;height:220px;border-radius:12px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.8)}
+#fsar img{width:100%;height:100%;object-fit:cover;display:block}
+#fsti{font-size:20px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#fsat{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
+#fstac{display:flex;align-items:center;gap:14px;margin-top:4px}
+.fta{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Syne',sans-serif;font-size:12px;transition:color .2s}
+.fta:hover{color:#fff}
+.fta.liked{color:var(--accent)}
+.fta svg{width:15px;height:15px}
+#fsct{display:flex;flex-direction:column;gap:10px}
+#fspr{display:flex;align-items:center;gap:10px}
+#fspb{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:500px;cursor:pointer}
+#fspf{height:100%;background:#fff;border-radius:500px;width:0%;pointer-events:none;transition:width .4s linear}
+.fstm{font-size:11px;color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums;width:34px;flex-shrink:0}
+.fstm:last-child{text-align:right}
+#fscr{display:flex;align-items:center;justify-content:center;gap:22px}
+.fcb{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:6px;display:flex;border-radius:6px;transition:all .15s}
+.fcb:hover{color:#fff;transform:scale(1.1)}
+.fcb.on{color:var(--accent)}
+.fcb svg{width:20px;height:20px;display:block}
+#fsbp{width:52px;height:52px;background:#fff;border-radius:50%;color:#000;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
+#fsbp:hover{transform:scale(1.06)}
+#fsbp svg{width:22px;height:22px}
+#fsvr{display:flex;align-items:center;gap:8px}
+#fsvr svg{width:13px;height:13px;color:rgba(255,255,255,.35);flex-shrink:0}
+#fsvsl{-webkit-appearance:none;flex:1;height:3px;background:rgba(255,255,255,.2);border-radius:500px;outline:none;cursor:pointer}
+#fsvsl::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;cursor:pointer}
+
+/* LYRICS PANEL — Apple Music style */
+#fsr{
+  position:relative;z-index:1;flex:1;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  pointer-events:none;
+  /* fade top and bottom */
+  -webkit-mask-image:linear-gradient(transparent 0%,black 20%,black 80%,transparent 100%);
+  mask-image:linear-gradient(transparent 0%,black 20%,black 80%,transparent 100%);
+}
+#fslyr{
+  display:flex;flex-direction:column;gap:28px;
+  width:100%;padding:0 40px;
+  /* this gets moved by JS, not scrolled by user */
+  position:relative;
+  transition:transform .4s ease;
+}
+.ll{
+  font-size:22px;font-weight:700;line-height:1.4;
+  color:rgba(255,255,255,.15);
+  cursor:default;
+  white-space:pre-wrap;
+  transition:all .5s ease;
+}
+.ll.active{color:#fff;font-size:30px}
+.ll.near{color:rgba(255,255,255,.4);font-size:25px}
+#fsnolyric{color:rgba(255,255,255,.25);font-size:16px;text-align:center;width:100%}
 
 /* left panel */
 #fsl{position:relative;z-index:1;width:340px;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;padding:32px;gap:20px;height:100%}
