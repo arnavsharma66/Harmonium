@@ -5,6 +5,7 @@ from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
