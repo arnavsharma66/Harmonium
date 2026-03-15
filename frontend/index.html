@@ -961,14 +961,23 @@ function startLyrSync(){
     for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=cur)ai=i;}
     if(ai===lastLyrIdx)return;
     lastLyrIdx=ai;
-
-    // Mark active, near, and far lines
     document.querySelectorAll('.ll').forEach((el,i)=>{
       el.classList.remove('active','near');
       const diff=i-ai;
       if(diff===0)el.classList.add('active');
       else if(Math.abs(diff)<=1)el.classList.add('near');
     });
+    // Move the lyric container up so active line stays centered
+    const activeLine=document.getElementById(`ll${ai}`);
+    const container=document.getElementById('fsr');
+    const lyrDiv=document.getElementById('fslyr');
+    if(activeLine&&container&&lyrDiv){
+      const containerCenter=container.offsetHeight/2;
+      const lineOffset=activeLine.offsetTop+activeLine.offsetHeight/2;
+      lyrDiv.style.transform=`translateY(${containerCenter-lineOffset}px)`;
+    }
+  },300);
+}
 
     // Scroll the lyric container so active line is centered
     const activeLine=document.getElementById(`ll${ai}`);
