@@ -5,7 +5,11 @@ from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='None',
+)
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5500")
 
