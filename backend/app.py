@@ -9,8 +9,19 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
 
 # Allow requests from your Vercel frontend
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5500")
-CORS(app, origins=[FRONTEND_URL], supports_credentials=True)
+import re
+def cors_origin(origin):
+    if not origin:
+        return False
+    if origin == FRONTEND_URL:
+        return True
+    if re.match(r'https://harmonium.*\.vercel\.app', origin):
+        return True
+    if re.match(r'http://localhost(:\d+)?', origin):
+        return True
+    return False
 
+CORS(app, origins=cors_origin, supports_credentials=True)
 # ── OAuth setup ──
 oauth = OAuth(app)
 google = oauth.register(
