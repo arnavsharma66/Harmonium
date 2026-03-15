@@ -1,16 +1,12 @@
 import os
+import uuid
 import requests
-from flask import Flask, redirect, request, jsonify, session
+from flask import Flask, redirect, request, jsonify
 from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret-key-change-me")
-app.config.update(
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE='None',
-)
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5500").rstrip("/")
 
@@ -23,7 +19,8 @@ ALLOWED_ORIGINS = [
 
 CORS(app, origins=ALLOWED_ORIGINS, supports_credentials=True)
 
-# ── OAuth setup ──
+# In-memory token store: { harmonium_token: { access_token, user } }
+TOKEN_STORE = {}
 oauth = OAuth(app)
 google = oauth.register(
     name="google",
@@ -39,62 +36,104 @@ google = oauth.register(
 YOUTUBE_API = "https://www.googleapis.com/youtube/v3"
 
 
-# ── helpers ──
+def get_token_data():
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return None
+    tok = auth[7:]
+    return TOKEN_STORE.get(tok)
+
+
 def yt(path, params=None):
-    tok = session.get("access_token")
-    if not tok:
+    data = get_token_data()
+    if not data:
         return None, 401
+    access_token = data["access_token"]
     url = f"{YOUTUBE_API}{path}"
-    r = requests.get(url, headers={"Authorization": f"Bearer {tok}"}, params=params or {})
-    if r.status_code == 401:
-        session.clear()
-        return None, 401
+    r = requests.get(url, headers={"Authorization": f"Bearer {access_token}"}, params=params or {})
     if not r.ok:
         return None, r.status_code
     return r.json(), 200
 
 
-def authed():
-    return "access_token" in session
-
-
-# ── auth routes ──
 @app.route("/auth/login")
 def login():
     redirect_uri = "https://harmonium.onrender.com/auth/callback"
-    return google.authorize_redirect(redirect_uri)
+    state = str(uuid.uuid4())
+    auth_url = (
+        f"https://accounts.google.com/o/oauth2/v2/auth"
+        f"?client_id={os.environ['GOOGLE_CLIENT_ID']}"
+        f"&redirect_uri={redirect_uri}"
+        f"&response_type=code"
+        f"&scope=openid%20email%20profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.readonly"
+        f"&state={state}"
+        f"&access_type=offline"
+    )
+    return redirect(auth_url)
 
 
 @app.route("/auth/callback")
 def callback():
-    token = google.authorize_access_token()
-    session["access_token"] = token["access_token"]
-    userinfo = token.get("userinfo") or google.userinfo()
-    session["user"] = {
-        "name": userinfo.get("name", ""),
-        "email": userinfo.get("email", ""),
-        "picture": userinfo.get("picture", ""),
+    code = request.args.get("code")
+    if not code:
+        return redirect(f"{FRONTEND_URL}?error=no_code")
+
+    redirect_uri = "https://harmonium.onrender.com/auth/callback"
+    token_resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "code": code,
+            "client_id": os.environ["GOOGLE_CLIENT_ID"],
+            "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
+            "redirect_uri": redirect_uri,
+            "grant_type": "authorization_code",
+        },
+    )
+    if not token_resp.ok:
+        return redirect(f"{FRONTEND_URL}?error=token_failed")
+
+    token_data = token_resp.json()
+    access_token = token_data.get("access_token")
+
+    user_resp = requests.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    user = user_resp.json() if user_resp.ok else {}
+
+    harmonium_token = str(uuid.uuid4())
+    TOKEN_STORE[harmonium_token] = {
+        "access_token": access_token,
+        "user": {
+            "name": user.get("name", ""),
+            "email": user.get("email", ""),
+            "picture": user.get("picture", ""),
+        },
     }
-    return redirect(f"{FRONTEND_URL}?logged_in=1")
 
-
-@app.route("/auth/logout")
-def logout():
-    session.clear()
-    return redirect(FRONTEND_URL)
+    return redirect(f"{FRONTEND_URL}?h_token={harmonium_token}")
 
 
 @app.route("/auth/me")
 def me():
-    if not authed():
+    data = get_token_data()
+    if not data:
         return jsonify({"error": "not authenticated"}), 401
-    return jsonify(session.get("user", {}))
+    return jsonify(data["user"])
 
 
-# ── YouTube API proxy routes ──
+@app.route("/auth/logout", methods=["POST"])
+def logout():
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        tok = auth[7:]
+        TOKEN_STORE.pop(tok, None)
+    return jsonify({"ok": True})
+
+
 @app.route("/api/playlists")
 def playlists():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     params = {"part": "snippet,contentDetails", "mine": "true", "maxResults": 50}
     if request.args.get("pageToken"):
@@ -105,7 +144,7 @@ def playlists():
 
 @app.route("/api/playlist-items")
 def playlist_items():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     pid = request.args.get("playlistId")
     if not pid:
@@ -119,7 +158,7 @@ def playlist_items():
 
 @app.route("/api/videos")
 def videos():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     ids = request.args.get("id")
     if not ids:
@@ -130,7 +169,7 @@ def videos():
 
 @app.route("/api/liked")
 def liked():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     params = {"part": "snippet,contentDetails", "myRating": "like", "maxResults": 50}
     if request.args.get("pageToken"):
@@ -141,7 +180,7 @@ def liked():
 
 @app.route("/api/history")
 def history():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     params = {"part": "snippet,contentDetails", "mine": "true", "maxResults": 50}
     data, status = yt("/activities", params)
@@ -150,7 +189,7 @@ def history():
 
 @app.route("/api/search")
 def search():
-    if not authed():
+    if not get_token_data():
         return jsonify({"error": "not authenticated"}), 401
     q = request.args.get("q", "")
     if not q:
