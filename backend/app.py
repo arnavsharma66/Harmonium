@@ -5,14 +5,14 @@ from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret-key-change-me")
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='None',
 )
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5500")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5500").rstrip("/")
 
 ALLOWED_ORIGINS = [
     FRONTEND_URL,
@@ -22,6 +22,7 @@ ALLOWED_ORIGINS = [
 ]
 
 CORS(app, origins=ALLOWED_ORIGINS, supports_credentials=True)
+
 # ── OAuth setup ──
 oauth = OAuth(app)
 google = oauth.register(
@@ -40,7 +41,6 @@ YOUTUBE_API = "https://www.googleapis.com/youtube/v3"
 
 # ── helpers ──
 def yt(path, params=None):
-    """Make a YouTube API call using the user's stored access token."""
     tok = session.get("access_token")
     if not tok:
         return None, 401
@@ -61,7 +61,7 @@ def authed():
 # ── auth routes ──
 @app.route("/auth/login")
 def login():
-    redirect_uri = request.host_url.rstrip("/") + "/auth/callback"
+    redirect_uri = "https://harmonium.onrender.com/auth/callback"
     return google.authorize_redirect(redirect_uri)
 
 
@@ -69,7 +69,6 @@ def login():
 def callback():
     token = google.authorize_access_token()
     session["access_token"] = token["access_token"]
-    # fetch user info and store
     userinfo = token.get("userinfo") or google.userinfo()
     session["user"] = {
         "name": userinfo.get("name", ""),
@@ -93,9 +92,6 @@ def me():
 
 
 # ── YouTube API proxy routes ──
-# All routes below just pass the user's own token to YouTube.
-# Quota is charged to the USER, not to your Google Cloud project.
-
 @app.route("/api/playlists")
 def playlists():
     if not authed():
