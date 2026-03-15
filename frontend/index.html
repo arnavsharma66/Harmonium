@@ -582,12 +582,24 @@ async function loadHome(){
 
   // Playlist grid — only show playlists that likely have music
   // We check if name suggests video content and skip those
-  const vidKeywords=['gaming','stream','watch later','clips','vlog','youtube'];
-  const visPl=allPl.filter(p=>{
-    if(fm==='all')return true;
-    const n=(p.snippet.title||'').toLowerCase();
-    return !vidKeywords.some(k=>n.includes(k));
-  }).slice(0,6);
+const visPl=fm==='all'?allPl.slice(0,6):await getMusicPlaylists();
+  async function getMusicPlaylists(){
+  const results=[];
+  for(const p of allPl){
+    if(results.length>=6)break;
+    try{
+      const d=await req('/api/playlist-items',{playlistId:p.id,maxResults:'10'});
+      if(!d?.items?.length)continue;
+      const ids=d.items.map(i=>i.contentDetails?.videoId).filter(Boolean);
+      if(!ids.length)continue;
+      const vd=await req('/api/videos',{id:ids.join(',')});
+      if(!vd?.items?.length)continue;
+      const hasMusicTrack=vd.items.map(mv).some(isMusic);
+      if(hasMusicTrack)results.push(p);
+    }catch{continue;}
+  }
+  return results;
+}
 
   let html=`<div class="hw"><div class="hg">${greet()}</div>`;
 
