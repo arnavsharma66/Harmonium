@@ -260,12 +260,42 @@ img{display:block}
 .prow{display:flex;align-items:center;gap:8px;width:100%;max-width:600px}
 .ptm{font-size:10px;color:var(--text3);font-variant-numeric:tabular-nums;width:34px;flex-shrink:0}
 .ptm:last-child{text-align:right}
-#pb{flex:1;height:3px;background:var(--s4);border-radius:3px;cursor:pointer;position:relative;transition:height .12s;user-select:none}
-#pb:hover{height:5px}
-#pf{height:100%;background:var(--text2);border-radius:3px;width:0%;pointer-events:none;position:relative;transition:width .4s linear}
-#pb:hover #pf{background:var(--accent)}
-#pdot{position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:var(--text);opacity:0;pointer-events:none;transition:opacity .12s}
-#pb:hover #pdot{opacity:1}
+/* Progress bar — taller hit area via padding trick */
+.prow{position:relative}
+#pb{
+  flex:1;height:4px;background:var(--s4);border-radius:3px;
+  cursor:pointer;position:relative;
+  user-select:none;
+  /* tall invisible hit area */
+  padding:10px 0;
+  margin:-10px 0;
+  background-clip:content-box;
+  transition:none;
+}
+#pb::before{
+  content:'';position:absolute;
+  left:0;right:0;top:50%;transform:translateY(-50%);
+  height:4px;background:var(--s4);border-radius:3px;
+  transition:height .15s;
+  pointer-events:none;
+}
+#pb:hover::before,#pb.dragging::before{height:6px;}
+#pf{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  height:4px;background:var(--text2);border-radius:3px;
+  width:0%;pointer-events:none;
+  transition:height .15s;
+}
+#pb:hover #pf,#pb.dragging #pf{height:6px;background:var(--accent);}
+#pdot{
+  position:absolute;right:-6px;top:50%;transform:translateY(-50%);
+  width:12px;height:12px;border-radius:50%;
+  background:var(--text);
+  opacity:0;pointer-events:none;
+  transition:opacity .15s;
+  box-shadow:0 0 0 3px rgba(255,255,255,.1);
+}
+#pb:hover #pdot,#pb.dragging #pdot{opacity:1;}
 
 /* Right */
 #pr{display:flex;align-items:center;gap:8px;width:220px;justify-content:flex-end;flex-shrink:0}
@@ -333,11 +363,11 @@ img{display:block}
 #lyrempty{color:var(--text3);font-size:14px;text-align:center}
 
 /* ── YT POPUP ── */
-#yw{position:fixed;bottom:calc(var(--ph)+10px);right:16px;width:260px;height:146px;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#000;z-index:210;transform:translateY(12px);opacity:0;transition:all .25s;pointer-events:none}
+#yw{position:fixed;bottom:calc(var(--ph)+12px);right:20px;width:260px;height:146px;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#000;z-index:210;transform:translateY(12px);opacity:0;transition:all .25s;pointer-events:none}
 #yw.show{transform:translateY(0);opacity:1;pointer-events:all}
 #yf{width:100%;height:100%}
-#vtbtn{position:fixed;bottom:calc(var(--ph)+10px);right:16px;background:var(--s2);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 10px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text3);cursor:pointer;z-index:211;display:none;transition:color .15s}
-#vtbtn:hover{color:var(--text)}
+#vtbtn{background:transparent;border:none;color:var(--text3);font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;padding:5px 8px;border-radius:3px;display:none;transition:color .15s;white-space:nowrap;flex-shrink:0}
+#vtbtn:hover{color:var(--text2)}
 
 /* ── TOAST ── */
 #toast{position:fixed;bottom:calc(var(--ph)+14px);left:50%;transform:translateX(-50%) translateY(6px);background:var(--s3);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:8px 18px;font-size:13px;font-weight:500;color:var(--text2);opacity:0;pointer-events:none;transition:all .2s;z-index:500;white-space:nowrap}
@@ -448,6 +478,7 @@ img{display:block}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
         LYRICS
       </button>
+      <button id="vtbtn" onclick="toggleVid()">Show video</button>
       <button id="qtbtn" onclick="toggleQ()" title="Queue">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
       </button>
@@ -469,7 +500,6 @@ img{display:block}
 
 <!-- YT -->
 <div id="yw"><div id="yf"></div></div>
-<button id="vtbtn" onclick="toggleVid()">Show video</button>
 <div id="toast"></div>
 
 <script>
@@ -492,7 +522,7 @@ function saveL(){localStorage.setItem('hlik',JSON.stringify([...liked]));}
 
 // ── BOOT ──
 window.addEventListener('load',()=>{
-  loadYT(); setupDrag(); setFUI(fm);
+  loadYT(); setFUI(fm);
   const p=new URLSearchParams(location.search);
   const tok=p.get('h_token');
   if(tok){localStorage.setItem('htok',tok);history.replaceState({},'','/');}
@@ -505,7 +535,7 @@ async function checkAuth(){
   try{
     const u=await req('/auth/me');
     if(u.error){localStorage.removeItem('htok');hideLoader();showLanding();return;}
-    showApp(u); await loadPl(); goHome(); hideLoader();
+    showApp(u); setupDrag(); await loadSidebar(); goHome(); hideLoader();
   }catch{hideLoader();showLanding();}
 }
 function hideLoader(){const l=document.getElementById('loader');l.classList.add('out');setTimeout(()=>l.style.display='none',700);}
@@ -634,7 +664,7 @@ function pFH(id){const idx=S.q.findIndex(t=>t.id===id);if(idx>=0){play(idx);retu
 function pFL(i){if(window._lc){S.q=filt([...window._lc]);play(i);}}
 
 // ── SIDEBAR PLAYLISTS ──
-async function loadPl(){
+async function loadSidebar(){
   const el=document.getElementById('pls');
   el.innerHTML='<div class="sempty"><div class="spin" style="margin:0 auto 8px"></div>Loading…</div>';
   try{
@@ -803,11 +833,42 @@ function shareT(id){navigator.clipboard.writeText(`https://www.youtube.com/watch
 // ── PROGRESS + DRAG ──
 function setupDrag(){
   const pb=document.getElementById('pb');
-  pb.addEventListener('mousedown',e=>{dragging=true;doSeek(e,pb);});
-  document.addEventListener('mousemove',e=>{if(!dragging)return;doSeek(e,pb);});
-  document.addEventListener('mouseup',()=>{dragging=false;});
+  if(!pb)return;
+  pb.addEventListener('mousedown',e=>{
+    dragging=true;
+    pb.classList.add('dragging');
+    doSeek(e,pb);
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    doSeek(e,pb);
+  });
+  document.addEventListener('mouseup',()=>{
+    if(dragging){dragging=false;document.getElementById('pb').classList.remove('dragging');}
+  });
+  // Touch support
+  pb.addEventListener('touchstart',e=>{dragging=true;pb.classList.add('dragging');doSeekTouch(e,pb);},{passive:true});
+  document.addEventListener('touchmove',e=>{if(!dragging)return;doSeekTouch(e,pb);},{passive:true});
+  document.addEventListener('touchend',()=>{if(dragging){dragging=false;document.getElementById('pb').classList.remove('dragging');}});
 }
-function doSeek(e,el){if(!ytR||S.dur<=0)return;const r=el.getBoundingClientRect();ytp.seekTo(Math.max(0,Math.min(S.dur,((e.clientX-r.left)/r.width)*S.dur)),true);}
+function doSeek(e,el){
+  if(!ytR||S.dur<=0)return;
+  const r=el.getBoundingClientRect();
+  const pct=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  // Update fill immediately for responsive feel
+  document.getElementById('pf').style.width=(pct*100)+'%';
+  document.getElementById('pf').style.transition='none';
+  setTimeout(()=>{document.getElementById('pf').style.transition='';},100);
+  ytp.seekTo(pct*S.dur,true);
+}
+function doSeekTouch(e,el){
+  if(!ytR||S.dur<=0||!e.touches[0])return;
+  const r=el.getBoundingClientRect();
+  const pct=Math.max(0,Math.min(1,(e.touches[0].clientX-r.left)/r.width));
+  document.getElementById('pf').style.width=(pct*100)+'%';
+  ytp.seekTo(pct*S.dur,true);
+}
 
 let ptimer=null;
 function startProg(){
