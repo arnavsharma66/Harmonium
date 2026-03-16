@@ -693,51 +693,6 @@ a{text-decoration:none}
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── NOW PLAYING MODAL ── */
-#np{padding:4px 8px;border-radius:10px;transition:background .15s}
-#np:hover{background:rgba(255,255,255,.04)}
-#npmodal{
-  position:fixed;inset:0;z-index:900;
-  background:rgba(4,6,10,.72);backdrop-filter:blur(20px);
-  display:none;align-items:center;justify-content:center;
-}
-#npmodal.open{display:flex}
-#npcard{
-  width:min(980px,92vw);height:min(84vh,760px);
-  border-radius:22px;
-  background:linear-gradient(165deg,rgba(20,24,34,.95),rgba(12,15,24,.92));
-  border:1px solid rgba(255,255,255,.1);
-  box-shadow:0 30px 80px rgba(0,0,0,.55);
-  display:flex;flex-direction:column;overflow:hidden;
-}
-#nphead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.08)}
-#npsub{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
-#nptitle{font-size:18px;font-weight:700;color:var(--text)}
-#npclose{border:none;background:transparent;color:var(--text2);font-size:30px;line-height:1;padding:0 4px}
-#nphero{display:flex;gap:18px;padding:18px 22px;align-items:center;border-bottom:1px solid rgba(255,255,255,.06)}
-#npcover{width:120px;height:120px;border-radius:14px;background:var(--s3);overflow:hidden;flex-shrink:0;box-shadow:0 18px 38px rgba(0,0,0,.45)}
-#npcover img{width:100%;height:100%;object-fit:cover}
-#npmain{font-size:30px;font-weight:700;line-height:1.05;letter-spacing:-.8px;max-width:540px}
-#npch{font-size:14px;color:var(--text2);margin-top:8px}
-#npchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.npchip{font-size:11px;font-weight:600;color:var(--text2);border:1px solid rgba(255,255,255,.13);padding:4px 10px;border-radius:999px}
-#nptabs{display:flex;gap:8px;padding:14px 22px 10px}
-.nptab{border:none;background:rgba(255,255,255,.04);color:var(--text3);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
-.nptab.on{background:var(--acc);color:#fff}
-#npbody{flex:1;min-height:0;padding:0 22px 20px}
-.npview{height:100%;overflow:auto;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.02);padding:14px}
-.nply{padding:10px 12px;border-radius:10px;color:var(--text2);line-height:1.55;cursor:pointer;transition:background .12s,color .12s}
-.nply:hover{background:rgba(255,255,255,.04)}
-.nply.on{background:rgba(250,69,111,.18);color:#fff}
-.npq{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer}
-.npq:hover{background:rgba(255,255,255,.04)}
-.npq img{width:38px;height:38px;border-radius:8px;object-fit:cover}
-.npqt{font-size:12px;color:var(--text)}
-.npqc{font-size:10px;color:var(--text3)}
-#lyrtools{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0 0}
-.lyrctl{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:999px}
-#lyroffset{font-size:11px;color:var(--text3);min-width:70px;text-align:center}
-
 /* ── APPLE-STYLE MOTION + RESPONSIVE POLISH ── */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -763,10 +718,6 @@ a{text-decoration:none}
   #pr{display:none}
   #player{grid-template-columns:1fr;height:104px;padding:10px 12px;gap:8px}
   #np{display:none}
-  #npcard{width:96vw;height:88vh}
-  #nphero{align-items:flex-start}
-  #npmain{font-size:24px}
-  #npcover{width:96px;height:96px}
   .ttbl{padding:8px 12px 96px}
 }
 </style>
