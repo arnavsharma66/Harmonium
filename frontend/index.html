@@ -787,7 +787,7 @@ a{text-decoration:none}
   </div>
 
   <div id="player">
-    <div id="np">
+    <div id="np" onclick="openNowPlaying()" title="Open now playing">
       <div id="npa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </div>
@@ -849,7 +849,43 @@ a{text-decoration:none}
 
 <div id="lyrpanel">
   <div id="lyri">
+    <div id="lyrtools">
+      <button class="lyrctl" onclick="adjLyrOffset(-0.5)">−0.5s</button>
+      <span id="lyroffset">Sync 0.0s</span>
+      <button class="lyrctl" onclick="adjLyrOffset(0.5)">+0.5s</button>
+    </div>
     <div id="lyrl"><div id="lyrempty">No lyrics</div></div>
+  </div>
+</div>
+
+<div id="npmodal" onclick="closeNowPlaying(event)">
+  <div id="npcard" onclick="event.stopPropagation()">
+    <div id="nphead">
+      <div>
+        <div id="npsub">Now Playing</div>
+        <div id="nptitle">Harmonium</div>
+      </div>
+      <button id="npclose" onclick="closeNowPlaying()">×</button>
+    </div>
+    <div id="nphero">
+      <div id="npcover"></div>
+      <div id="npmeta">
+        <div id="npmain">Not playing</div>
+        <div id="npch"></div>
+        <div id="npchips">
+          <span class="npchip" id="npdur">0:00</span>
+          <span class="npchip" id="npsync">Sync 0.0s</span>
+        </div>
+      </div>
+    </div>
+    <div id="nptabs">
+      <button class="nptab on" id="nptablyr" onclick="setNpTab('lyrics')">Lyrics</button>
+      <button class="nptab" id="nptabq" onclick="setNpTab('queue')">Up Next</button>
+    </div>
+    <div id="npbody">
+      <div id="nplyrics" class="npview"></div>
+      <div id="npqueue" class="npview" style="display:none"></div>
+    </div>
   </div>
 </div>
 
@@ -859,9 +895,9 @@ a{text-decoration:none}
 <script>
 'use strict';
 const API=location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5000':'https://harmonium.onrender.com';
-let ytp=null,ytR=false,vidOn=false,lyrOpen=false;
+let ytp=null,ytR=false,vidOn=false,lyrOpen=false,npOpen=false,npTab='lyrics';
 let fm=localStorage.getItem('hfm')||'music';
-let lyrs=[],lyT=null,lastLI=-1;
+let lyrs=[],lyT=null,lastLI=-1,lyrOffset=parseFloat(localStorage.getItem('hlyrOffset')||'0'),lyrRaw='';
 let liked=new Set(JSON.parse(localStorage.getItem('hlik')||'[]'));
 let allPl=[];
 let dragging=false;
@@ -870,9 +906,20 @@ const S={q:[],i:-1,pl:false,sh:false,rp:false,dur:0};
 function getH(){try{return JSON.parse(localStorage.getItem('hph')||'{}')}catch{return{}}}
 function trackP(t){const h=getH();if(!h[t.id])h[t.id]={...t,plays:0,last:0};h[t.id].plays++;h[t.id].last=Date.now();h[t.id].title=t.title;h[t.id].ch=t.ch;h[t.id].thumb=t.thumb;h[t.id].rawDur=t.rawDur;localStorage.setItem('hph',JSON.stringify(h));}
 function saveL(){localStorage.setItem('hlik',JSON.stringify([...liked]));}
+function setOffsetUI(){
+  const txt=`Sync ${lyrOffset>=0?'+':''}${lyrOffset.toFixed(1)}s`;
+  document.getElementById('lyroffset').textContent=txt;
+  document.getElementById('npsync').textContent=txt;
+}
+function adjLyrOffset(v){
+  lyrOffset=Math.max(-5,Math.min(5,lyrOffset+v));
+  localStorage.setItem('hlyrOffset',String(lyrOffset));
+  setOffsetUI();
+  if(ytR&&S.i>=0&&lyrOpen)syncLyr(ytp.getCurrentTime?.()||0);
+}
 
 window.addEventListener('load',()=>{
-  loadYT();setFUI(fm);
+  loadYT();setFUI(fm);setOffsetUI();
   const p=new URLSearchParams(location.search);
   const tok=p.get('h_token');
   if(tok){localStorage.setItem('htok',tok);history.replaceState({},'','/');}
@@ -1110,7 +1157,12 @@ function mv(v){return{id:v.id,title:v.snippet.title,ch:v.snippet.channelTitle,th
 function loadYT(){const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);}
 window.onYouTubeIframeAPIReady=()=>{
   ytp=new YT.Player('yf',{height:'150',width:'268',playerVars:{autoplay:0,controls:0,playsinline:1,enablejsapi:1,rel:0},events:{
-    onReady:()=>{ytR=true;ytp.setVolume(85);},
+    onReady:()=>{
+      ytR=true;
+      const sv=parseInt(localStorage.getItem('hvol')||'85');
+      document.getElementById('vs').value=sv;
+      ytp.setVolume(sv);
+    },
     onStateChange:e=>{const P=YT.PlayerState;
       if(e.data===P.PLAYING){S.pl=true;showPause();startProg();showVT();updBars(true);}
       else if(e.data===P.PAUSED){S.pl=false;showPlay();stopProg();updBars(false);}
@@ -1130,9 +1182,10 @@ function play(i){
   const npa=document.getElementById('npa');
   npa.innerHTML=t.thumb?`<img src="${t.thumb}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" alt=""/>`:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
   document.getElementById('nlbtn').classList.toggle('liked',liked.has(t.id));
+  updateNowPlayingUI(t);
   document.getElementById(`tr${i}`)?.scrollIntoView({block:'nearest',behavior:'smooth'});
   S.pl=true;showPause();trackP(t);updateQ();
-  if(lyrOpen)fetchLyrics(t);
+  if(lyrOpen||npOpen)fetchLyrics(t);
 }
 function playAll(){if(S.q.length)play(0);}
 function shufflePlay(){if(!S.q.length)return;S.sh=true;document.getElementById('bsh').classList.add('on');play(Math.floor(Math.random()*S.q.length));toast('Shuffle on');}
@@ -1144,7 +1197,7 @@ function nextT(){
 }
 function toggleShuffle(){S.sh=!S.sh;document.getElementById('bsh').classList.toggle('on',S.sh);toast(S.sh?'Shuffle on':'Shuffle off');}
 function toggleRepeat(){S.rp=!S.rp;document.getElementById('brp').classList.toggle('on',S.rp);toast(S.rp?'Repeat on':'Repeat off');}
-function setVol(v){if(ytR)ytp.setVolume(parseInt(v));}
+function setVol(v){const n=parseInt(v);localStorage.setItem('hvol',String(n));if(ytR)ytp.setVolume(n);}
 function showVT(){document.getElementById('vtbtn').style.display='block';}
 function toggleVid(){vidOn=!vidOn;document.getElementById('yw').classList.toggle('show',vidOn);document.getElementById('vtbtn').textContent=vidOn?'HIDE VIDEO':'VIDEO';}
 function showPlay(){document.getElementById('iplay').style.display='';document.getElementById('ipause').style.display='none';}
@@ -1210,26 +1263,30 @@ function toggleLyr(){
 async function fetchLyrics(t){
   const ll=document.getElementById('lyrl');
   ll.innerHTML='<div id="lyrempty">Loading…</div>';
-  lyrs=[];lastLI=-1;clearInterval(lyT);lyT=null;
+  lyrs=[];lyrRaw='';lastLI=-1;clearInterval(lyT);lyT=null;
   try{
     const artist=encodeURIComponent((t.ch||'').replace(/VEVO|Official|Music|Records|Topic/gi,'').trim());
     const title=encodeURIComponent(t.title.replace(/\(.*?\)|\[.*?\]|ft\..*|feat\..*/gi,'').trim());
     const r=await fetch(`https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`);
     const res=await r.json();
-    if(!res?.length){ll.innerHTML='<div id="lyrempty">No lyrics found</div>';return;}
+    if(!res?.length){ll.innerHTML='<div id="lyrempty">No lyrics found</div>';renderNpLyrics();return;}
     const best=res[0];
     if(best.syncedLyrics){
-      lyrs=best.syncedLyrics.split('\n').map(l=>{const m=l.match(/\[(\d+):(\d+\.\d+)\](.*)/);if(!m)return null;return{time:parseInt(m[1])*60+parseFloat(m[2]),text:m[3].trim()};}).filter(l=>l&&l.text);
-      ll.innerHTML=lyrs.map((l,i)=>`<div class="lline" id="ll${i}">${X(l.text)}</div>`).join('');
+      lyrs=best.syncedLyrics.split('\n').map(l=>{const m=l.match(/\[(\d+):(\d+(?:\.\d+)?)\](.*)/);if(!m)return null;return{time:parseInt(m[1])*60+parseFloat(m[2]),text:m[3].trim()};}).filter(l=>l&&l.text);
+      ll.innerHTML=lyrs.map((l,i)=>`<div class="lline" id="ll${i}" onclick="seekLyr(${i})">${X(l.text)}</div>`).join('');
+      lyrRaw='synced';
     }else if(best.plainLyrics){
       ll.innerHTML=best.plainLyrics.split('\n').map(l=>`<div class="lline">${X(l)||'&nbsp;'}</div>`).join('');
+      lyrRaw='plain';
     }else{ll.innerHTML='<div id="lyrempty">No lyrics found</div>';}
-  }catch{ll.innerHTML='<div id="lyrempty">Could not load</div>';}
+    renderNpLyrics();
+  }catch{ll.innerHTML='<div id="lyrempty">Could not load</div>';renderNpLyrics();}
 }
 
 function syncLyr(cur){
   if(!lyrs.length)return;
-  let ai=0;for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=cur)ai=i;}
+  const tcur=Math.max(0,cur+lyrOffset);
+  let ai=0;for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=tcur)ai=i;}
   if(ai===lastLI)return;lastLI=ai;
   document.querySelectorAll('.lline').forEach((el,i)=>{
     el.classList.remove('active','near');
@@ -1237,6 +1294,7 @@ function syncLyr(cur){
     if(d===0)el.classList.add('active');
     else if(Math.abs(d)<=2)el.classList.add('near');
   });
+  document.querySelectorAll('.nply').forEach((el,i)=>el.classList.toggle('on',i===ai));
   const active=document.getElementById('ll'+ai);
   const panel=document.getElementById('lyri');
   const cont=document.getElementById('lyrl');
@@ -1246,12 +1304,50 @@ function syncLyr(cur){
   }
 }
 
+function openNowPlaying(){
+  npOpen=true;
+  document.getElementById('npmodal').classList.add('open');
+  if(S.i>=0){updateNowPlayingUI(S.q[S.i]);if(!lyrs.length)fetchLyrics(S.q[S.i]);}
+  setNpTab(npTab);
+}
+function closeNowPlaying(e){if(e&&e.target&&e.target.id!=='npmodal')return;npOpen=false;document.getElementById('npmodal').classList.remove('open');}
+function setNpTab(tab){
+  npTab=tab;
+  document.getElementById('nptablyr').classList.toggle('on',tab==='lyrics');
+  document.getElementById('nptabq').classList.toggle('on',tab==='queue');
+  document.getElementById('nplyrics').style.display=tab==='lyrics'?'block':'none';
+  document.getElementById('npqueue').style.display=tab==='queue'?'block':'none';
+  if(tab==='queue')renderNpQueue();
+}
+function updateNowPlayingUI(t){
+  if(!t)return;
+  document.getElementById('npmain').textContent=t.title||'Unknown track';
+  document.getElementById('npch').textContent=t.ch||'';
+  document.getElementById('npdur').textContent=pdur(t.rawDur)||'0:00';
+  document.getElementById('npcover').innerHTML=t.thumb?`<img src="${t.thumb}" alt=""/>`:'';
+  renderNpQueue();
+}
+function renderNpLyrics(){
+  const w=document.getElementById('nplyrics');
+  if(!w)return;
+  if(!lyrs.length){w.innerHTML=`<div class="sempty">${lyrRaw==='plain'?'Plain lyrics loaded':'No synced lyrics yet'}</div>`;return;}
+  w.innerHTML=lyrs.map((l,i)=>`<div class="nply" onclick="seekLyr(${i})">${X(l.text)}</div>`).join('');
+}
+function renderNpQueue(){
+  const q=document.getElementById('npqueue');
+  if(!q)return;
+  if(!S.q.length){q.innerHTML='<div class="sempty">Queue is empty</div>';return;}
+  q.innerHTML=S.q.map((t,i)=>`<div class="npq" onclick="play(${i})"><div>${t.thumb?`<img src="${t.thumb}" alt=""/>`:''}</div><div><div class="npqt">${X(t.title)}</div><div class="npqc">${X(t.ch)}</div></div></div>`).join('');
+}
+function seekLyr(i){if(!lyrs[i]||!ytR)return;ytp.seekTo(Math.max(0,lyrs[i].time-lyrOffset),true);}
+
 function toggleQ(){const p=document.getElementById('qp'),b=document.getElementById('qtbtn'),o=p.classList.contains('open');p.classList.toggle('open',!o);b.classList.toggle('on',!o);if(!o)updateQ();}
 function updateQ(){
   const l=document.getElementById('ql'),c=document.getElementById('qcnt');
   c.textContent=`${S.q.length} track${S.q.length!==1?'s':''}`;
   if(!S.q.length){l.innerHTML='<div class="sempty">Queue is empty</div>';return;}
   l.innerHTML=S.q.map((t,i)=>`<div class="qi${S.i===i?' qa':''}" onclick="play(${i})"><div class="qia">${t.thumb?`<img src="${t.thumb}" loading="lazy" alt=""/>`:''}</div><div class="qii"><div class="qit">${X(t.title)}</div><div class="qic">${X(t.ch)}</div></div><button class="qrm" onclick="event.stopPropagation();rmQ(${i})">×</button></div>`).join('');
+  renderNpQueue();
 }
 function rmQ(i){if(i===S.i)nextT();S.q.splice(i,1);if(i<S.i)S.i--;updateQ();toast('Removed');}
 function clearQ(){S.q=[];S.i=-1;if(ytR)ytp.stopVideo();S.pl=false;showPlay();stopProg();updateQ();toast('Cleared');}
@@ -1267,6 +1363,7 @@ document.addEventListener('keydown',e=>{
   if(e.code==='KeyR')toggleRepeat();
   if(e.code==='KeyL')toggleLyr();
   if(e.code==='KeyM'){const v=document.getElementById('vs');v.value=v.value>0?0:85;setVol(v.value);}
+  if(e.code==='Escape'&&npOpen)closeNowPlaying();
 });
 
 let ttt;
