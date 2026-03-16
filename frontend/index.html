@@ -11,20 +11,20 @@
    HARMONIUM  —  Final Design
    ════════════════════════════════════════ */
 :root {
-  --bg:     #080808;
-  --s1:     #101010;
-  --s2:     #181818;
-  --s3:     #222;
-  --s4:     #333;
-  --s5:     #444;
-  --acc:    #ff6b35;   /* warm orange — distinctive, not Spotify, not Apple */
-  --acc2:   #ff8c5a;
-  --text:   #efefef;
-  --text2:  #888;
-  --text3:  #444;
+  --bg:     #07080c;
+  --s1:     #10131a;
+  --s2:     #151922;
+  --s3:     #1d2230;
+  --s4:     #31384a;
+  --s5:     #444f67;
+  --acc:    #fa456f;
+  --acc2:   #8f8dff;
+  --text:   #f5f7ff;
+  --text2:  #adb6cc;
+  --text3:  #687089;
   --ph:     82px;
   --sb:     224px;
-  --r:      6px;
+  --r:      12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -56,7 +56,10 @@ a{text-decoration:none}
 /* ── LANDING ── */
 #landing{
   position:fixed;inset:0;
-  background:radial-gradient(ellipse at 30% 50%,rgba(255,107,53,.06) 0%,transparent 60%),var(--bg);
+  background:
+    radial-gradient(ellipse at 30% 50%,rgba(250,69,111,.16) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 10%,rgba(143,141,255,.16) 0%,transparent 52%),
+    var(--bg);
   display:flex;align-items:center;justify-content:center;
   z-index:800;opacity:0;visibility:hidden;
   transition:opacity .4s,visibility .4s;
@@ -93,9 +96,9 @@ a{text-decoration:none}
   height:52px;flex-shrink:0;
   display:flex;align-items:center;
   padding:0 18px;gap:12px;
-  background:rgba(8,8,8,.9);
+  background:rgba(9,11,16,.7);
   backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.09);
   z-index:100;
 }
 .tlogo{
@@ -107,11 +110,11 @@ a{text-decoration:none}
 #sb{
   flex:1;max-width:320px;
   display:flex;align-items:center;
-  background:var(--s2);border-radius:var(--r);
+  background:rgba(255,255,255,.04);border-radius:500px;
   padding:0 12px;gap:8px;
-  border:1px solid transparent;transition:border .15s;
+  border:1px solid rgba(255,255,255,.08);transition:border .15s,background .15s;
 }
-#sb:focus-within{border-color:rgba(255,255,255,.15)}
+#sb:focus-within{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.06)}
 #sb svg{width:13px;height:13px;color:var(--text3);flex-shrink:0}
 #si{
   background:transparent;border:none;outline:none;
@@ -142,7 +145,7 @@ a{text-decoration:none}
 /* ── SIDEBAR ── */
 #sidebar{
   width:var(--sb);flex-shrink:0;
-  background:var(--s1);
+  background:linear-gradient(180deg,rgba(16,19,26,.94),rgba(16,19,26,.82));
   border-right:1px solid rgba(255,255,255,.04);
   display:flex;flex-direction:column;overflow:hidden;
 }
@@ -265,7 +268,7 @@ a{text-decoration:none}
 .mc{
   width:164px;flex-shrink:0;cursor:pointer;
   padding:14px;border-radius:var(--r);
-  background:var(--s2);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
   transition:background .15s,transform .15s;
   position:relative;border:1px solid transparent;
 }
@@ -274,7 +277,7 @@ a{text-decoration:none}
   width:136px;height:136px;border-radius:4px;
   background:var(--s3);overflow:hidden;
   position:relative;margin-bottom:12px;
-  box-shadow:0 8px 28px rgba(0,0,0,.6);
+  box-shadow:0 14px 36px rgba(0,0,0,.4);
 }
 .mca img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
 .mc:hover .mca img{transform:scale(1.04)}
@@ -306,7 +309,7 @@ a{text-decoration:none}
 .vhdr{
   display:flex;align-items:flex-end;gap:28px;
   padding:40px 28px 28px;
-  background:linear-gradient(180deg,rgba(255,107,53,.07) 0%,transparent 100%);
+  background:linear-gradient(180deg,rgba(143,141,255,.18) 0%,rgba(250,69,111,.11) 38%,transparent 100%);
   position:relative;overflow:hidden;
 }
 .vhdr::before{
@@ -341,7 +344,7 @@ a{text-decoration:none}
   font-family:'Familjen Grotesk',sans-serif;
   font-size:13px;font-weight:700;cursor:pointer;
   transition:all .15s;letter-spacing:.2px;
-  box-shadow:0 4px 20px rgba(255,107,53,.3);
+  box-shadow:0 10px 26px rgba(250,69,111,.32);
 }
 .vplay:hover{background:var(--acc2);transform:scale(1.03)}
 .vplay svg{width:14px;height:14px}
@@ -477,10 +480,10 @@ a{text-decoration:none}
    ══════════════════════════════════════ */
 #player{
   height:var(--ph);
-  background:rgba(10,10,10,.96);
+  background:rgba(9,12,19,.86);
   backdrop-filter:blur(32px);
   -webkit-backdrop-filter:blur(32px);
-  border-top:1px solid rgba(255,255,255,.06);
+  border-top:1px solid rgba(255,255,255,.12);
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
@@ -636,7 +639,7 @@ a{text-decoration:none}
   background:rgba(8,8,8,.96);
   backdrop-filter:blur(40px);
   -webkit-backdrop-filter:blur(40px);
-  border-top:1px solid rgba(255,107,53,.15);
+  border-top:1px solid rgba(250,69,111,.2);
   overflow:hidden;
   transition:height .35s cubic-bezier(.4,0,.2,1);
   z-index:150;
@@ -689,6 +692,83 @@ a{text-decoration:none}
   transition:all .2s;z-index:600;white-space:nowrap;
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── NOW PLAYING MODAL ── */
+#np{padding:4px 8px;border-radius:10px;transition:background .15s}
+#np:hover{background:rgba(255,255,255,.04)}
+#npmodal{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(4,6,10,.72);backdrop-filter:blur(20px);
+  display:none;align-items:center;justify-content:center;
+}
+#npmodal.open{display:flex}
+#npcard{
+  width:min(980px,92vw);height:min(84vh,760px);
+  border-radius:22px;
+  background:linear-gradient(165deg,rgba(20,24,34,.95),rgba(12,15,24,.92));
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#nphead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.08)}
+#npsub{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
+#nptitle{font-size:18px;font-weight:700;color:var(--text)}
+#npclose{border:none;background:transparent;color:var(--text2);font-size:30px;line-height:1;padding:0 4px}
+#nphero{display:flex;gap:18px;padding:18px 22px;align-items:center;border-bottom:1px solid rgba(255,255,255,.06)}
+#npcover{width:120px;height:120px;border-radius:14px;background:var(--s3);overflow:hidden;flex-shrink:0;box-shadow:0 18px 38px rgba(0,0,0,.45)}
+#npcover img{width:100%;height:100%;object-fit:cover}
+#npmain{font-size:30px;font-weight:700;line-height:1.05;letter-spacing:-.8px;max-width:540px}
+#npch{font-size:14px;color:var(--text2);margin-top:8px}
+#npchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.npchip{font-size:11px;font-weight:600;color:var(--text2);border:1px solid rgba(255,255,255,.13);padding:4px 10px;border-radius:999px}
+#nptabs{display:flex;gap:8px;padding:14px 22px 10px}
+.nptab{border:none;background:rgba(255,255,255,.04);color:var(--text3);padding:8px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.nptab.on{background:var(--acc);color:#fff}
+#npbody{flex:1;min-height:0;padding:0 22px 20px}
+.npview{height:100%;overflow:auto;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.02);padding:14px}
+.nply{padding:10px 12px;border-radius:10px;color:var(--text2);line-height:1.55;cursor:pointer;transition:background .12s,color .12s}
+.nply:hover{background:rgba(255,255,255,.04)}
+.nply.on{background:rgba(250,69,111,.18);color:#fff}
+.npq{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer}
+.npq:hover{background:rgba(255,255,255,.04)}
+.npq img{width:38px;height:38px;border-radius:8px;object-fit:cover}
+.npqt{font-size:12px;color:var(--text)}
+.npqc{font-size:10px;color:var(--text3)}
+#lyrtools{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0 0}
+.lyrctl{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:999px}
+#lyroffset{font-size:11px;color:var(--text3);min-width:70px;text-align:center}
+
+/* ── APPLE-STYLE MOTION + RESPONSIVE POLISH ── */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+@media (max-width:1080px){
+  .plg{grid-template-columns:repeat(2,1fr)}
+  .vhdr{padding:28px 20px 24px;gap:18px}
+  .vtit{font-size:34px}
+  #ct{width:360px}
+}
+
+@media (max-width:860px){
+  #sidebar{display:none}
+  #lyrpanel{left:0}
+  .hw{padding:24px 16px 100px}
+  .plg{grid-template-columns:1fr}
+  .hgreet{font-size:32px}
+  #topbar{padding:0 12px;gap:8px}
+  .fpills{display:none}
+  #unm{display:none}
+  #ct{width:min(320px,100%)}
+  #pr{display:none}
+  #player{grid-template-columns:1fr;height:104px;padding:10px 12px;gap:8px}
+  #np{display:none}
+  #npcard{width:96vw;height:88vh}
+  #nphero{align-items:flex-start}
+  #npmain{font-size:24px}
+  #npcover{width:96px;height:96px}
+  .ttbl{padding:8px 12px 96px}
+}
 </style>
 </head>
 <body>
@@ -756,7 +836,7 @@ a{text-decoration:none}
   </div>
 
   <div id="player">
-    <div id="np">
+    <div id="np" onclick="openNowPlaying()" title="Open now playing">
       <div id="npa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </div>
@@ -818,7 +898,43 @@ a{text-decoration:none}
 
 <div id="lyrpanel">
   <div id="lyri">
+    <div id="lyrtools">
+      <button class="lyrctl" onclick="adjLyrOffset(-0.5)">−0.5s</button>
+      <span id="lyroffset">Sync 0.0s</span>
+      <button class="lyrctl" onclick="adjLyrOffset(0.5)">+0.5s</button>
+    </div>
     <div id="lyrl"><div id="lyrempty">No lyrics</div></div>
+  </div>
+</div>
+
+<div id="npmodal" onclick="closeNowPlaying(event)">
+  <div id="npcard" onclick="event.stopPropagation()">
+    <div id="nphead">
+      <div>
+        <div id="npsub">Now Playing</div>
+        <div id="nptitle">Harmonium</div>
+      </div>
+      <button id="npclose" onclick="closeNowPlaying()">×</button>
+    </div>
+    <div id="nphero">
+      <div id="npcover"></div>
+      <div id="npmeta">
+        <div id="npmain">Not playing</div>
+        <div id="npch"></div>
+        <div id="npchips">
+          <span class="npchip" id="npdur">0:00</span>
+          <span class="npchip" id="npsync">Sync 0.0s</span>
+        </div>
+      </div>
+    </div>
+    <div id="nptabs">
+      <button class="nptab on" id="nptablyr" onclick="setNpTab('lyrics')">Lyrics</button>
+      <button class="nptab" id="nptabq" onclick="setNpTab('queue')">Up Next</button>
+    </div>
+    <div id="npbody">
+      <div id="nplyrics" class="npview"></div>
+      <div id="npqueue" class="npview" style="display:none"></div>
+    </div>
   </div>
 </div>
 
@@ -828,9 +944,9 @@ a{text-decoration:none}
 <script>
 'use strict';
 const API=location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5000':'https://harmonium.onrender.com';
-let ytp=null,ytR=false,vidOn=false,lyrOpen=false;
+let ytp=null,ytR=false,vidOn=false,lyrOpen=false,npOpen=false,npTab='lyrics';
 let fm=localStorage.getItem('hfm')||'music';
-let lyrs=[],lyT=null,lastLI=-1;
+let lyrs=[],lyT=null,lastLI=-1,lyrOffset=parseFloat(localStorage.getItem('hlyrOffset')||'0'),lyrRaw='';
 let liked=new Set(JSON.parse(localStorage.getItem('hlik')||'[]'));
 let allPl=[];
 let dragging=false;
@@ -839,9 +955,20 @@ const S={q:[],i:-1,pl:false,sh:false,rp:false,dur:0};
 function getH(){try{return JSON.parse(localStorage.getItem('hph')||'{}')}catch{return{}}}
 function trackP(t){const h=getH();if(!h[t.id])h[t.id]={...t,plays:0,last:0};h[t.id].plays++;h[t.id].last=Date.now();h[t.id].title=t.title;h[t.id].ch=t.ch;h[t.id].thumb=t.thumb;h[t.id].rawDur=t.rawDur;localStorage.setItem('hph',JSON.stringify(h));}
 function saveL(){localStorage.setItem('hlik',JSON.stringify([...liked]));}
+function setOffsetUI(){
+  const txt=`Sync ${lyrOffset>=0?'+':''}${lyrOffset.toFixed(1)}s`;
+  document.getElementById('lyroffset').textContent=txt;
+  document.getElementById('npsync').textContent=txt;
+}
+function adjLyrOffset(v){
+  lyrOffset=Math.max(-5,Math.min(5,lyrOffset+v));
+  localStorage.setItem('hlyrOffset',String(lyrOffset));
+  setOffsetUI();
+  if(ytR&&S.i>=0&&lyrOpen)syncLyr(ytp.getCurrentTime?.()||0);
+}
 
 window.addEventListener('load',()=>{
-  loadYT();setFUI(fm);
+  loadYT();setFUI(fm);setOffsetUI();
   const p=new URLSearchParams(location.search);
   const tok=p.get('h_token');
   if(tok){localStorage.setItem('htok',tok);history.replaceState({},'','/');}
@@ -1079,7 +1206,12 @@ function mv(v){return{id:v.id,title:v.snippet.title,ch:v.snippet.channelTitle,th
 function loadYT(){const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);}
 window.onYouTubeIframeAPIReady=()=>{
   ytp=new YT.Player('yf',{height:'150',width:'268',playerVars:{autoplay:0,controls:0,playsinline:1,enablejsapi:1,rel:0},events:{
-    onReady:()=>{ytR=true;ytp.setVolume(85);},
+    onReady:()=>{
+      ytR=true;
+      const sv=parseInt(localStorage.getItem('hvol')||'85');
+      document.getElementById('vs').value=sv;
+      ytp.setVolume(sv);
+    },
     onStateChange:e=>{const P=YT.PlayerState;
       if(e.data===P.PLAYING){S.pl=true;showPause();startProg();showVT();updBars(true);}
       else if(e.data===P.PAUSED){S.pl=false;showPlay();stopProg();updBars(false);}
@@ -1099,9 +1231,10 @@ function play(i){
   const npa=document.getElementById('npa');
   npa.innerHTML=t.thumb?`<img src="${t.thumb}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" alt=""/>`:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
   document.getElementById('nlbtn').classList.toggle('liked',liked.has(t.id));
+  updateNowPlayingUI(t);
   document.getElementById(`tr${i}`)?.scrollIntoView({block:'nearest',behavior:'smooth'});
   S.pl=true;showPause();trackP(t);updateQ();
-  if(lyrOpen)fetchLyrics(t);
+  if(lyrOpen||npOpen)fetchLyrics(t);
 }
 function playAll(){if(S.q.length)play(0);}
 function shufflePlay(){if(!S.q.length)return;S.sh=true;document.getElementById('bsh').classList.add('on');play(Math.floor(Math.random()*S.q.length));toast('Shuffle on');}
@@ -1113,7 +1246,7 @@ function nextT(){
 }
 function toggleShuffle(){S.sh=!S.sh;document.getElementById('bsh').classList.toggle('on',S.sh);toast(S.sh?'Shuffle on':'Shuffle off');}
 function toggleRepeat(){S.rp=!S.rp;document.getElementById('brp').classList.toggle('on',S.rp);toast(S.rp?'Repeat on':'Repeat off');}
-function setVol(v){if(ytR)ytp.setVolume(parseInt(v));}
+function setVol(v){const n=parseInt(v);localStorage.setItem('hvol',String(n));if(ytR)ytp.setVolume(n);}
 function showVT(){document.getElementById('vtbtn').style.display='block';}
 function toggleVid(){vidOn=!vidOn;document.getElementById('yw').classList.toggle('show',vidOn);document.getElementById('vtbtn').textContent=vidOn?'HIDE VIDEO':'VIDEO';}
 function showPlay(){document.getElementById('iplay').style.display='';document.getElementById('ipause').style.display='none';}
@@ -1179,26 +1312,30 @@ function toggleLyr(){
 async function fetchLyrics(t){
   const ll=document.getElementById('lyrl');
   ll.innerHTML='<div id="lyrempty">Loading…</div>';
-  lyrs=[];lastLI=-1;clearInterval(lyT);lyT=null;
+  lyrs=[];lyrRaw='';lastLI=-1;clearInterval(lyT);lyT=null;
   try{
     const artist=encodeURIComponent((t.ch||'').replace(/VEVO|Official|Music|Records|Topic/gi,'').trim());
     const title=encodeURIComponent(t.title.replace(/\(.*?\)|\[.*?\]|ft\..*|feat\..*/gi,'').trim());
     const r=await fetch(`https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`);
     const res=await r.json();
-    if(!res?.length){ll.innerHTML='<div id="lyrempty">No lyrics found</div>';return;}
+    if(!res?.length){ll.innerHTML='<div id="lyrempty">No lyrics found</div>';renderNpLyrics();return;}
     const best=res[0];
     if(best.syncedLyrics){
-      lyrs=best.syncedLyrics.split('\n').map(l=>{const m=l.match(/\[(\d+):(\d+\.\d+)\](.*)/);if(!m)return null;return{time:parseInt(m[1])*60+parseFloat(m[2]),text:m[3].trim()};}).filter(l=>l&&l.text);
-      ll.innerHTML=lyrs.map((l,i)=>`<div class="lline" id="ll${i}">${X(l.text)}</div>`).join('');
+      lyrs=best.syncedLyrics.split('\n').map(l=>{const m=l.match(/\[(\d+):(\d+(?:\.\d+)?)\](.*)/);if(!m)return null;return{time:parseInt(m[1])*60+parseFloat(m[2]),text:m[3].trim()};}).filter(l=>l&&l.text);
+      ll.innerHTML=lyrs.map((l,i)=>`<div class="lline" id="ll${i}" onclick="seekLyr(${i})">${X(l.text)}</div>`).join('');
+      lyrRaw='synced';
     }else if(best.plainLyrics){
       ll.innerHTML=best.plainLyrics.split('\n').map(l=>`<div class="lline">${X(l)||'&nbsp;'}</div>`).join('');
+      lyrRaw='plain';
     }else{ll.innerHTML='<div id="lyrempty">No lyrics found</div>';}
-  }catch{ll.innerHTML='<div id="lyrempty">Could not load</div>';}
+    renderNpLyrics();
+  }catch{ll.innerHTML='<div id="lyrempty">Could not load</div>';renderNpLyrics();}
 }
 
 function syncLyr(cur){
   if(!lyrs.length)return;
-  let ai=0;for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=cur)ai=i;}
+  const tcur=Math.max(0,cur+lyrOffset);
+  let ai=0;for(let i=0;i<lyrs.length;i++){if(lyrs[i].time<=tcur)ai=i;}
   if(ai===lastLI)return;lastLI=ai;
   document.querySelectorAll('.lline').forEach((el,i)=>{
     el.classList.remove('active','near');
@@ -1206,6 +1343,7 @@ function syncLyr(cur){
     if(d===0)el.classList.add('active');
     else if(Math.abs(d)<=2)el.classList.add('near');
   });
+  document.querySelectorAll('.nply').forEach((el,i)=>el.classList.toggle('on',i===ai));
   const active=document.getElementById('ll'+ai);
   const panel=document.getElementById('lyri');
   const cont=document.getElementById('lyrl');
@@ -1215,12 +1353,50 @@ function syncLyr(cur){
   }
 }
 
+function openNowPlaying(){
+  npOpen=true;
+  document.getElementById('npmodal').classList.add('open');
+  if(S.i>=0){updateNowPlayingUI(S.q[S.i]);if(!lyrs.length)fetchLyrics(S.q[S.i]);}
+  setNpTab(npTab);
+}
+function closeNowPlaying(e){if(e&&e.target&&e.target.id!=='npmodal')return;npOpen=false;document.getElementById('npmodal').classList.remove('open');}
+function setNpTab(tab){
+  npTab=tab;
+  document.getElementById('nptablyr').classList.toggle('on',tab==='lyrics');
+  document.getElementById('nptabq').classList.toggle('on',tab==='queue');
+  document.getElementById('nplyrics').style.display=tab==='lyrics'?'block':'none';
+  document.getElementById('npqueue').style.display=tab==='queue'?'block':'none';
+  if(tab==='queue')renderNpQueue();
+}
+function updateNowPlayingUI(t){
+  if(!t)return;
+  document.getElementById('npmain').textContent=t.title||'Unknown track';
+  document.getElementById('npch').textContent=t.ch||'';
+  document.getElementById('npdur').textContent=pdur(t.rawDur)||'0:00';
+  document.getElementById('npcover').innerHTML=t.thumb?`<img src="${t.thumb}" alt=""/>`:'';
+  renderNpQueue();
+}
+function renderNpLyrics(){
+  const w=document.getElementById('nplyrics');
+  if(!w)return;
+  if(!lyrs.length){w.innerHTML=`<div class="sempty">${lyrRaw==='plain'?'Plain lyrics loaded':'No synced lyrics yet'}</div>`;return;}
+  w.innerHTML=lyrs.map((l,i)=>`<div class="nply" onclick="seekLyr(${i})">${X(l.text)}</div>`).join('');
+}
+function renderNpQueue(){
+  const q=document.getElementById('npqueue');
+  if(!q)return;
+  if(!S.q.length){q.innerHTML='<div class="sempty">Queue is empty</div>';return;}
+  q.innerHTML=S.q.map((t,i)=>`<div class="npq" onclick="play(${i})"><div>${t.thumb?`<img src="${t.thumb}" alt=""/>`:''}</div><div><div class="npqt">${X(t.title)}</div><div class="npqc">${X(t.ch)}</div></div></div>`).join('');
+}
+function seekLyr(i){if(!lyrs[i]||!ytR)return;ytp.seekTo(Math.max(0,lyrs[i].time-lyrOffset),true);}
+
 function toggleQ(){const p=document.getElementById('qp'),b=document.getElementById('qtbtn'),o=p.classList.contains('open');p.classList.toggle('open',!o);b.classList.toggle('on',!o);if(!o)updateQ();}
 function updateQ(){
   const l=document.getElementById('ql'),c=document.getElementById('qcnt');
   c.textContent=`${S.q.length} track${S.q.length!==1?'s':''}`;
   if(!S.q.length){l.innerHTML='<div class="sempty">Queue is empty</div>';return;}
   l.innerHTML=S.q.map((t,i)=>`<div class="qi${S.i===i?' qa':''}" onclick="play(${i})"><div class="qia">${t.thumb?`<img src="${t.thumb}" loading="lazy" alt=""/>`:''}</div><div class="qii"><div class="qit">${X(t.title)}</div><div class="qic">${X(t.ch)}</div></div><button class="qrm" onclick="event.stopPropagation();rmQ(${i})">×</button></div>`).join('');
+  renderNpQueue();
 }
 function rmQ(i){if(i===S.i)nextT();S.q.splice(i,1);if(i<S.i)S.i--;updateQ();toast('Removed');}
 function clearQ(){S.q=[];S.i=-1;if(ytR)ytp.stopVideo();S.pl=false;showPlay();stopProg();updateQ();toast('Cleared');}
@@ -1236,6 +1412,7 @@ document.addEventListener('keydown',e=>{
   if(e.code==='KeyR')toggleRepeat();
   if(e.code==='KeyL')toggleLyr();
   if(e.code==='KeyM'){const v=document.getElementById('vs');v.value=v.value>0?0:85;setVol(v.value);}
+  if(e.code==='Escape'&&npOpen)closeNowPlaying();
 });
 
 let ttt;
