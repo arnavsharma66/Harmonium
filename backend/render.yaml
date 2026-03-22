@@ -2,14 +2,17 @@ services:
   - type: web
     name: harmonium-backend
     runtime: python
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: GOOGLE_CLIENT_ID
-        sync: false          # you paste this in Render dashboard
+        sync: false
       - key: GOOGLE_CLIENT_SECRET
-        sync: false          # you paste this in Render dashboard
+        sync: false
       - key: SECRET_KEY
-        generateValue: true  # Render auto-generates a secure random key
+        generateValue: true
       - key: FRONTEND_URL
-        sync: false          # your Vercel URL e.g. https://harmonium.vercel.app
+        sync: false
+      - key: REDIRECT_URI
+        sync: false
