@@ -111,7 +111,7 @@ function extractDominantColor(imgSrc, callback) {
 }
 
 // --- 4. API Service ---
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://harmonium-backend.onrender.com';
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://harmonium.onrender.com';
 
 async function apiFetch(endpoint) {
     if (!State.token) throw new Error("No token");
