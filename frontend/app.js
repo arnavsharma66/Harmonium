@@ -129,7 +129,7 @@ async function apiFetch(endpoint) {
 // --- 5. Authentication ---
 async function initAuth() {
     const urlParams = new URLSearchParams(window.location.search);
-   const tokenParams = urlParams.get('h_token');
+   const tokenParams = urlParams.get('token');
     
     if (tokenParams) {
         State.token = tokenParams;
